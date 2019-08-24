@@ -45,6 +45,13 @@ const byte DRIVESPEED2 = 100;
 //Set to 0 if you only want 2 speeds.
 const byte DRIVESPEED3 = 127;
 
+
+//***********DOME COMMANDS
+const int ALL_FLAPS = 1;
+const int TOP_FLAPS = 2;
+const int ALL_FLAPS_WIG_OUT = 3;
+const int TOGGLE_HP = 4;
+
 byte drivespeed = DRIVESPEED1;
 
 // the higher this number the faster the droid will spin in place, lower - easier to control.
@@ -89,6 +96,7 @@ const int DOMEBAUDRATE = 2400;
 #include <Servo.h>
 #include <MP3Trigger.h>
 #include <XBOXRECV.h>
+#include <Wire.h>
 
 #include <SoftwareSerial.h>
 // These are the pins for the Sabertooth and Syren
@@ -141,7 +149,6 @@ boolean firstLoadOnConnect = false;
 //};
 //SEND_DATA_STRUCTURE domeData;//give a name to the group of data
 
-boolean isHPOn = false;
 
 
 
@@ -194,6 +201,7 @@ void setup(){
       //Serial.print(F("\r\nOSC did not start"));
       while (1); //halt
     }
+     Wire.begin();
   //Serial.print(F("\r\nXbox Wireless Receiver Library Started"));
 }
 
@@ -353,6 +361,9 @@ void loop(){
       mp3Trigger.play(2);
     } else if(Xbox.getButtonPress(R1, 0)){
       mp3Trigger.play(9);
+      sendSignal(TOP_FLAPS);
+    } else if(Xbox.getButtonPress(R2, 0)){
+      sendSignal(ALL_FLAPS_WIG_OUT);
     } else {
       mp3Trigger.play(random(13,17));
     }
@@ -399,18 +410,12 @@ void loop(){
   }
 
   // turn hp light on & off with Left Analog Stick Press (L3)
-  /*
+  
   if(Xbox.getButtonClick(L3, 0))  {
     // if hp light is on, turn it off
-    if(isHPOn){
-      isHPOn = false;
-      // turn hp light off
-    } else {
-      isHPOn = true;
-      // turn hp light on
-    }
+    sendSignal(TOGGLE_HP);
   }
-  */
+  
 
 
   // Change drivespeed if drive is eabled
@@ -492,3 +497,9 @@ turnThrottle = map(Xbox.getAnalogHat(RightHatX, 0), -32768, 32767, -TURNSPEED, T
     SyR.motor(1,domeThrottle);
   #endif
 } // END loop()
+
+void sendSignal(int val) {
+  Wire.beginTransmission(25); // transmit to device #25
+  Wire.write(val);
+  Wire.endTransmission();  
+}

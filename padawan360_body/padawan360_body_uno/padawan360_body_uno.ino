@@ -51,6 +51,9 @@ const int ALL_FLAPS = 1;
 const int TOP_FLAPS = 2;
 const int ALL_FLAPS_WIG_OUT = 3;
 const int TOGGLE_HP = 4;
+const int DEATH_STAR = 5;
+const int ALTERNATE_FLAPS = 6;
+const int THE_WAVE = 7;
 
 byte drivespeed = DRIVESPEED1;
 
@@ -357,8 +360,10 @@ void loop(){
   if(Xbox.getButtonClick(Y, 0)){
     if(Xbox.getButtonPress(L1, 0)){
       mp3Trigger.play(8);
+      sendSignal(THE_WAVE);
     } else if(Xbox.getButtonPress(L2, 0)){
       mp3Trigger.play(2);
+      sendSignal(ALTERNATE_FLAPS);
     } else if(Xbox.getButtonPress(R1, 0)){
       mp3Trigger.play(9);
       sendSignal(TOP_FLAPS);
@@ -401,6 +406,7 @@ void loop(){
     if(Xbox.getButtonPress(L1, 0)){
       mp3Trigger.play(5);
     } else if(Xbox.getButtonPress(L2, 0)){
+      sendSignal(DEATH_STAR);
       mp3Trigger.play(4);
     } else if(Xbox.getButtonPress(R1, 0)){
       mp3Trigger.play(12);
